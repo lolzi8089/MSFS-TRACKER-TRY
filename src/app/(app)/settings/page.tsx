@@ -16,33 +16,38 @@ export default function SettingsPage() {
       <div className="grid max-w-3xl gap-4 p-4 lg:p-6">
         <GlassCard title="SimConnect bridge" subtitle="MSFS 2020 / 2024 on Windows">
           <p className="text-sm leading-relaxed text-slate-400">
-            Run the local agent in <span className="font-mono text-slate-200">/bridge</span> on the same PC as the sim.
-            It opens SimConnect (KittyHawk for MSFS 2020, SunRise for 2024) and POSTs telemetry to{" "}
-            <span className="font-mono text-slate-200">/api/telemetry</span>. Set{" "}
-            <span className="font-mono text-slate-200">BRIDGE_SECRET</span> identically in the web app{" "}
-            <span className="font-mono text-slate-200">.env</span> and the bridge environment.
+            The bridge in <span className="font-mono text-slate-200">/bridge</span> runs on the same PC as Microsoft
+            Flight Simulator, reads live position via SimConnect, and POSTs to{" "}
+            <span className="font-mono text-slate-200">/api/telemetry</span>. By default the app uses a local{" "}
+            <span className="font-mono text-slate-200">SQLite</span> file (<span className="font-mono">prisma/dev.db</span>
+            ) — no Docker required. The bridge loads <span className="font-mono text-slate-200">.env</span> from the
+            project root automatically.
           </p>
           <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-slate-400">
             <li>
-              Start Postgres: <span className="font-mono text-slate-200">docker compose up -d</span>
+              One-time: <span className="font-mono text-slate-200">npm run msfs:setup</span> (creates DB + installs
+              bridge deps). If Prisma errors with EPERM on Windows, stop <span className="font-mono text-slate-200">npm
+              run dev</span> first, then run <span className="font-mono text-slate-200">npm run db:regenerate</span>.
             </li>
             <li>
-              Copy <span className="font-mono text-slate-200">.env.example</span> →{" "}
-              <span className="font-mono text-slate-200">.env</span> and run{" "}
-              <span className="font-mono text-slate-200">npx prisma db push</span>
+              Terminal A: <span className="font-mono text-slate-200">npm run dev</span>
             </li>
             <li>
-              In <span className="font-mono text-slate-200">bridge/</span>:{" "}
-              <span className="font-mono text-slate-200">npm install</span> then set{" "}
-              <span className="font-mono text-slate-200">BRIDGE_SECRET</span> (match server) and run{" "}
-              <span className="font-mono text-slate-200">npm run start</span>.
+              Start MSFS, then terminal B: <span className="font-mono text-slate-200">npm run msfs:bridge</span>
+            </li>
+            <li>
+              Open <span className="font-mono text-slate-200">/map</span> — you should see your aircraft. Optional:{" "}
+              set <span className="font-mono text-slate-200">BRIDGE_SECRET</span> (≥8 chars) in{" "}
+              <span className="font-mono text-slate-200">.env</span>; if you skip it in dev, a built-in fallback is used.
             </li>
           </ol>
           <p className="mt-3 text-xs text-slate-500">
-            Optional env on bridge: <span className="font-mono">MSFS_VERSION=2024</span>,{" "}
-            <span className="font-mono">ORIGIN_ICAO</span>, <span className="font-mono">DEST_ICAO</span>,{" "}
-            <span className="font-mono">API_BASE</span>, <span className="font-mono">PILOT_HANDLE</span>,{" "}
-            <span className="font-mono">CALLSIGN</span>.
+            Optional: <span className="font-mono">MSFS_VERSION=2024</span>, <span className="font-mono">ORIGIN_ICAO</span>
+            , <span className="font-mono">DEST_ICAO</span>, <span className="font-mono">API_BASE</span>,{" "}
+            <span className="font-mono">PILOT_HANDLE</span>, <span className="font-mono">CALLSIGN</span>. For Postgres
+            instead of SQLite, set <span className="font-mono">DATABASE_URL</span> and run{" "}
+            <span className="font-mono">docker compose up -d</span> + <span className="font-mono">npx prisma db push</span>
+            .
           </p>
         </GlassCard>
 

@@ -22,10 +22,6 @@ type Body = {
 };
 
 export async function POST(req: Request) {
-  if (!process.env.DATABASE_URL) {
-    return NextResponse.json({ ok: false, error: "DATABASE_URL is not configured" }, { status: 503 });
-  }
-
   const auth = req.headers.get("authorization");
   if (!verifyBridgeSecret(auth)) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });

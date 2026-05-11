@@ -1,3 +1,4 @@
+# Optional: use with DATABASE_URL=postgresql://... in .env (default app uses SQLite file ./prisma/dev.db).
 services:
   db:
     image: postgres:16-alpine

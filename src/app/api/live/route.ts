@@ -14,10 +14,6 @@ function inferPhase(altFt: number): LiveFlight["phase"] {
 }
 
 export async function GET() {
-  if (!process.env.DATABASE_URL) {
-    return NextResponse.json({ ok: true, flights: [] as LiveFlight[], source: "no_database" });
-  }
-
   const since = new Date(Date.now() - STALE_MS);
 
   try {
