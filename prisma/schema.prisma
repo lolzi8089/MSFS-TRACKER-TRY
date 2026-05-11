@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String            @id @default(cuid())
+  handle           String            @unique
+  displayName      String
+  createdAt        DateTime          @default(now())
+  liveSessions     LiveSession[]
+  completedFlights CompletedFlight[]
+}
+
+model LiveSession {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientSessionId String?
+  callsign        String
+  aircraftTitle   String
+  originIcao      String?
+  destIcao        String?
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+  lastLat         Float
+  lastLng         Float
+  lastAltFt       Float
+  lastHeading     Float
+  lastSpeedKts    Float
+  pathJson        String    @default("[]")
+  updatedAt       DateTime  @updatedAt
+
+  @@index([updatedAt])
+  @@index([userId, clientSessionId])
+}
+
+model CompletedFlight {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  callsign      String
+  aircraftTitle String
+  originIcao    String?
+  destIcao      String?
+  startedAt     DateTime
+  endedAt       DateTime
+  durationMin   Int?
+
+  @@index([endedAt])
+}
